@@ -23,6 +23,7 @@ class UserModel(BaseModel):
 
     # required fields after signup to send messages
     registration_id = db.Column(db.Integer, index=True)  # type:int
+    device_id = db.Column(db.Integer, index=True)  # type:int
     identity_public_key = db.Column(db.String())  # type:str
     signed_pre_key = db.Column(db.String())  # type:str
     one_time_pre_keys = db.Column(ARRAY(db.String())) # type: List[str]
@@ -36,6 +37,7 @@ class UserModel(BaseModel):
     def to_dict(self):
         return {'username': self.login.username,
                 'registration_id': self.registration_id,
+                'device_id': self.device_id,
                 'identity_public_key': self.identity_public_key,
                 'one_time_pre_key': self.one_time_pre_keys,
                 'signed_pre_key': self.signed_pre_key}
@@ -44,6 +46,7 @@ class UserModel(BaseModel):
         one_time_pre_key = self.one_time_pre_keys[0]
         return {'username': self.login.username,
                 'registration_id': self.registration_id,
+                'device_id': self.device_id,
                 'identity_public_key': self.identity_public_key,
                 'one_time_pre_key': one_time_pre_key,
                 'signed_pre_key': self.signed_pre_key}

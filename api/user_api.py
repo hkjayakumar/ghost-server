@@ -48,15 +48,17 @@ def update_user_keys(user_id: int):
         return bad_request(Error.ILLEGAL_ARGS, 'No permission to update user ' + str(user_id))
 
     registration_id = request.json.get('registration_id') # type:int
+    device_id = request.json.get('device_id') # type:int
     identity_public_key = request.json.get('identity_public_key')  # type:str
     signed_pre_key = request.json.get('signed_pre_key')  # type:str
     one_time_pre_keys = request.json.get('one_time_pre_keys')  # type:List[int]
 
     if any(x is None for x in 
-            [registration_id, identity_public_key, one_time_pre_keys, signed_pre_key]):
+            [registration_id, device_id, identity_public_key, one_time_pre_keys, signed_pre_key]):
         return bad_request(Error.MISSING_ARGS)
 
     user.registration_id = registration_id
+    user.device_id = device_id
     user.identity_public_key = identity_public_key
     user.signed_pre_key = signed_pre_key
     user.one_time_pre_keys = one_time_pre_keys
@@ -77,16 +79,31 @@ def get_other_user_keys(user_id: int):
     return jsonify({'user': user_dict, 'error': None})
 
 
-# @user_api.route('/api/v1/users/<int:user_id>/friends', methods=['GET'])
-# @auth.login_required
-# def get_other_user(user_id: int):
-#     user = UserModel.query.filter(UserModel.id == user_id).first()  # type:UserModel
-#     if user is None:
-#         return bad_request(Error.ILLEGAL_ARGS, 'User with id ' + str(user_id) + ' not found')
-#     user_dict = user.to_public_dict()
-#     user.one_time_pre_keys =  user.one_time_pre_keys[1:]
-#     db.session.commit()
-#     return jsonify({'user': user_dict, 'error': None})
+@user_api.route('/api/v1/users/<int:user_id>/friends', methods=['GET'])
+@auth.login_required
+def get_all_friends(user_id: int):
+    user = UserModel.query.filter(UserModel.id == user_id).first()  # type:UserModel
+    if user is None:
+        return bad_request(Error.ILLEGAL_ARGS, 'User with id ' + str(user_id) + ' not found')
+    
+    login_model = g.login  # type: LoginModel
+    user = login_model.user  # type: UserModel
+    if user_id != user.id:
+        return bad_request(Error.ILLEGAL_ARGS, 'No permission to view friends of user ' + str(user_id))
+
+    friend_list = user.friends
+    friends = []
+
+    for f in friend_list:
+        friend_user = UserModel.query.filter(UserModel.id == f).first()  # type:UserModel
+        registration_id = friend_user.registration_id
+        device_id = friend_user.device_id
+
+        friend_user_login = LoginModel.query.filter(LoginModel.user_id == f).first()
+        username = friend_user_login.username
+        friends.append({'username': username, 'registration_id': registration_id, 'device_id': device_id})
+
+    return jsonify({'friends': friends, 'error': None})
 
 
 @user_api.route('/api/v1/users/<int:user_id>/friends', methods=['POST'])
@@ -121,7 +138,7 @@ def add_friend(user_id: int):
     return get_other_user_keys(friend_user.id), 201
 
 
-@user_api.route('/api/v1/token')
+@user_api.route('/api/v1/token', methods=['GET'])
 @auth.login_required
 def get_auth_token():
     login_model = g.login  # type: LoginModel

@@ -7,6 +7,8 @@ from api.message_api import message_api
 import config
 from extensions import db
 
+from flask_socketio import SocketIO
+
 
 def factory(configuration=config.DevelopmentConfig):
     application = Flask(__name__)
@@ -24,4 +26,5 @@ def factory(configuration=config.DevelopmentConfig):
 
 if __name__ == '__main__':
     app = factory(os.environ['APP_SETTINGS'])
-    app.run()
+    socketio = SocketIO(app)
+    socketio.run(app)
