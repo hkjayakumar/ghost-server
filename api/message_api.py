@@ -43,7 +43,7 @@ def send_message():
 @message_api.route('/api/v1/messages/<int:receiver_id>/<int:sender_id>', methods=['GET'])
 @auth.login_required
 def receive_message(receiver_id: int, sender_id: int):
-    recevier = UserModel.query.filter(UserModel.id == receiver_id).first()  # type:UserModel
+    receiver = UserModel.query.filter(UserModel.id == receiver_id).first()  # type:UserModel
     if receiver is None:
         return bad_request(Error.ILLEGAL_ARGS, 'Receiver with id ' + str(receiver_id) + ' not found')
 
