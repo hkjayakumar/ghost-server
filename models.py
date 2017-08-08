@@ -67,7 +67,7 @@ class LoginModel(BaseModel):
     def verify_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, expiration=600):
+    def generate_auth_token(self, expiration=604800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'user_id': self.user_id})
 
