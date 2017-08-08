@@ -40,24 +40,28 @@ def send_message():
     return jsonify({'message': message.to_dict(), 'error': None}), 201
 
 
-@message_api.route('/api/v1/messages/<int:user_id>', methods=['GET'])
+@message_api.route('/api/v1/messages/<int:receiver_id>/<int:sender_id>', methods=['GET'])
 @auth.login_required
-def receive_message(user_id: int):
-    user = UserModel.query.filter(UserModel.id == user_id).first()  # type:UserModel
-    if user is None:
-        return bad_request(Error.ILLEGAL_ARGS, 'User with id ' + str(user_id) + ' not found')
+def receive_message(receiver_id: int, sender_id: int):
+    recevier = UserModel.query.filter(UserModel.id == receiver_id).first()  # type:UserModel
+    if receiver is None:
+        return bad_request(Error.ILLEGAL_ARGS, 'Receiver with id ' + str(receiver_id) + ' not found')
+
+    sender = UserModel.query.filter(UserModel.id == sender_id).first()  # type:UserModel
+    if sender is None:
+        return bad_request(Error.ILLEGAL_ARGS, 'Sender with id ' + str(sender_id) + ' not found')
 
     login_model = g.login  # type: LoginModel
-    user = login_model.user  # type: UserModel
+    receiver = login_model.user  # type: UserModel
 
-    if user_id != user.id:
-        return bad_request(Error.ILLEGAL_ARGS, 'No permission to get user messages ' + str(user_id))
+    if receiver_id != receiver.id:
+        return bad_request(Error.ILLEGAL_ARGS, 'No permission to get user messages ' + str(receiver_id))
 
-    messageRecords = MessageModel.query.filter(MessageModel.receiver_id == user_id).all()  # type:List[SkillModel]
+    messageRecords = MessageModel.query.filter(MessageModel.receiver_id == receiver_id and MessageModel.sender_id == sender_id).all()  # type:List[MessageModel]
     messages = [m.to_dict() for m in messageRecords]
-    
+
     for m in messageRecords:
         db.session.delete(m)
     db.session.commit()
-    
+
     return jsonify({'messages': messages, 'error': None}), 201
