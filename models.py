@@ -86,15 +86,14 @@ class LoginModel(BaseModel):
 
 
 class MessageModel(BaseModel):
-    __tablename__ = 'messages'
+    __tablename__ = 'messages'   
     sender_id = db.Column(db.Integer, ForeignKey(UserModel.id), primary_key=True)  # type:int
     receiver_id = db.Column(db.Integer, ForeignKey(UserModel.id), primary_key=True)  # type:int
     message_ciphertext = db.Column(db.String()) # type:str
-    timestamp = db.Column(db.DateTime()) # type:datetime.datetime
+    timestamp = db.Column(db.DateTime(), primary_key=True) # type:datetime.datetime
 
     def to_dict(self):
         return {'sender_id': self.sender_id,
                 'receiver_id': self.receiver_id,
                 'message_ciphertext': self.message_ciphertext,
-                'description': self.description,
                 'timestamp': str_from_date_time(self.timestamp)}
