@@ -8,5 +8,4 @@ import events
 
 ghost = factory(os.environ['APP_SETTINGS'])
 socketio.init_app(ghost)
-
-# socketio.run(ghost)
+socketio.run(ghost)
