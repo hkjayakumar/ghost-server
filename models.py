@@ -35,7 +35,8 @@ class UserModel(BaseModel):
     login = relationship("LoginModel", uselist=False, back_populates="user")  # type:LoginModel
 
     def to_dict(self):
-        return {'username': self.login.username,
+        return {'user_id': self.id,
+                'username': self.login.username,
                 'registration_id': self.registration_id,
                 'device_id': self.device_id,
                 'identity_public_key': self.identity_public_key,
@@ -44,7 +45,8 @@ class UserModel(BaseModel):
 
     def to_public_dict(self):
         one_time_pre_key = self.one_time_pre_keys[0]
-        return {'username': self.login.username,
+        return {'user_id': self.id,
+                'username': self.login.username,
                 'registration_id': self.registration_id,
                 'device_id': self.device_id,
                 'identity_public_key': self.identity_public_key,
