@@ -94,6 +94,9 @@ def get_all_friends(user_id: int):
     friend_list = user.friends
     friends = []
 
+    if friend_list is None:
+      return jsonify({'friends': [], 'error': None});
+
     for friend_user_id in friend_list:
         friend_user = UserModel.query.filter(UserModel.id == friend_user_id).first()  # type:UserModel
         friend_registration_id = friend_user.registration_id
