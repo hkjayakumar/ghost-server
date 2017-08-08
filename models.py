@@ -30,7 +30,6 @@ class UserModel(BaseModel):
 
     friends = db.Column(ARRAY(db.Integer())) # type: List[int]
 
-
     # LoginModel reference
     login = relationship("LoginModel", uselist=False, back_populates="user")  # type:LoginModel
 
