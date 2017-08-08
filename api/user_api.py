@@ -94,14 +94,16 @@ def get_all_friends(user_id: int):
     friend_list = user.friends
     friends = []
 
-    for f in friend_list:
-        friend_user = UserModel.query.filter(UserModel.id == f).first()  # type:UserModel
-        registration_id = friend_user.registration_id
-        device_id = friend_user.device_id
+    for friend_user_id in friend_list:
+        friend_user = UserModel.query.filter(UserModel.id == friend_user_id).first()  # type:UserModel
+        friend_registration_id = friend_user.registration_id
+        friend_device_id = friend_user.device_id
 
-        friend_user_login = LoginModel.query.filter(LoginModel.user_id == f).first()
-        username = friend_user_login.username
-        friends.append({'username': username, 'registration_id': registration_id, 'device_id': device_id})
+        friend_user_login = LoginModel.query.filter(LoginModel.user_id == friend_user_id).first()
+        friend_username = friend_user_login.username
+        friends.append({
+            'user_id': friend_user_id, 'username': friend_username, 
+            'registration_id': friend_registration_id, 'device_id': friend_device_id})
 
     return jsonify({'friends': friends, 'error': None})
 
