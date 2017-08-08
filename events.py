@@ -18,6 +18,8 @@ def connect():
     user_id = request.args.get('user_id') # Type:int
     token = request.args.get('token')
 
+    print("HEREEEEEEEEE")
+
     user = UserModel.query.filter(UserModel.id == user_id).first()  # type:UserModel
     if user is None:
         emit('exception', 'User with id ' + str(user_id) + ' not found')

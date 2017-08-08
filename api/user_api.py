@@ -124,6 +124,9 @@ def add_friend(user_id: int):
     if friend_username is None:
         return bad_request(Error.MISSING_ARGS)
     
+    if login_model.username == friend_username:
+        return bad_request(Error.ILLEGAL_ARGS, 'Cannot add self as friend')
+
     friend_login = LoginModel.query.filter_by(username=friend_username).first()
     if friend_login is None:
         return bad_request(Error.ILLEGAL_ARGS,
@@ -132,12 +135,12 @@ def add_friend(user_id: int):
     if user.friends is not None and friend_login.user_id in user.friends:
         return bad_request(Error.ILLEGAL_ARGS, 'User \'' + friend_username + '\' is already a friend')
 
-    friend_user = friend_login.user  # type:UserModel
-    user.friends = user.friends + [friend_user.id]
-    friend_user.friends = friend_user.friends + [user.id]
+    # friend_user = friend_login.user  # type:UserModel
+    user.friends = user.friends + [friend_login.user_id]
+    # friend_user.friends = friend_user.friends + [user.id]
 
     db.session.commit()
-    return get_other_user_keys(friend_user.id), 201
+    return get_other_user_keys(friend_login.user_id), 201
 
 
 @user_api.route('/api/v1/token', methods=['GET'])
