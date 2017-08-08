@@ -135,12 +135,32 @@ def add_friend(user_id: int):
     if user.friends is not None and friend_login.user_id in user.friends:
         return bad_request(Error.ILLEGAL_ARGS, 'User \'' + friend_username + '\' is already a friend')
 
-    # friend_user = friend_login.user  # type:UserModel
-    user.friends = user.friends + [friend_login.user_id]
-    # friend_user.friends = friend_user.friends + [user.id]
-
+    if user.friends is None:
+        user.friends = [friend_login.user_id]
+    else:
+        user.friends = user.friends + [friend_login.user_id]
     db.session.commit()
     return get_other_user_keys(friend_login.user_id), 201
+
+
+@user_api.route('/api/v1/users/<int:user_id>/friends/<int:friend_user_id>', methods=['POST'])
+@auth.login_required
+def remove_friend(user_id: int, friend_user_id: int):
+    user = UserModel.query.filter(UserModel.id == user_id).first()  # type:UserModel
+    if user is None:
+        return bad_request(Error.ILLEGAL_ARGS, 'User with id ' + str(user_id) + ' not found')
+
+    login_model = g.login  # type: LoginModel
+    user = login_model.user  # type: UserModel
+    if user_id != user.id:
+        return bad_request(Error.ILLEGAL_ARGS, 'No permission to update user ' + str(user_id))
+
+    if user.friends is None or friend_user_id not in user.friends:
+        return bad_request(Error.ILLEGAL_ARGS, 'User \'' + str(friend_user_id) + '\' is not a friend')
+
+    user.friends = user.friends.remove(friend_user_id)
+    db.session.commit()
+    return jsonify({'friends': user.friends}), 201
 
 
 @user_api.route('/api/v1/token', methods=['GET'])
