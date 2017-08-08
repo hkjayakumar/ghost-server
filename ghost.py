@@ -1,7 +1,6 @@
 from app import factory
 
 import os
-from flask_socketio import SocketIO
 from app import socketio
 
 import events
