@@ -3,7 +3,7 @@ from app import factory
 import os
 from app import socketio
 
-import events
+# import events
 
 ghost = factory(os.environ['APP_SETTINGS'])
-socketio.init_app(ghost)
+# socketio.init_app(ghost)
