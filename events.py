@@ -1,6 +1,6 @@
 from flask_socketio import send,emit
 
-from ghost import socketio
+from app import socketio
 
 import datetime
 from typing import List
@@ -42,7 +42,7 @@ def connect():
     else:
         messages = messagesQuery.all() # type:List[MessageModels]
         messages = [m.to_dict() for m in messages]
-        emit('messages', jsonify('messages': messages))
+        emit('messages', jsonify({'messages': messages}))
 
 
 @socketio.on('disconnect')
@@ -73,7 +73,7 @@ def message(message):
 
 
     if receiver_id in userToSocket:
-        emit('message_send', jsonify('message': message), room=userToSocket[receiver_id])
+        emit('message_send', jsonify({'message': message}), room=userToSocket[receiver_id])
     else:
         # Store in Database
         emit('stored')

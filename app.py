@@ -9,6 +9,7 @@ from extensions import db
 
 from flask_socketio import SocketIO
 
+socketio = SocketIO()
 
 def factory(configuration=config.DevelopmentConfig):
     application = Flask(__name__)
@@ -26,5 +27,5 @@ def factory(configuration=config.DevelopmentConfig):
 
 if __name__ == '__main__':
     app = factory(os.environ['APP_SETTINGS'])
-    socketio = SocketIO(app)
+    socketio.init_app(app)
     socketio.run(app)
