@@ -3,7 +3,7 @@ import enum
 from typing import List, Any, Dict
 
 from flask import current_app
-from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from itsdangerous import (JSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 from sqlalchemy import ForeignKey
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
@@ -67,8 +67,8 @@ class LoginModel(BaseModel):
     def verify_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
-    def generate_auth_token(self, expiration=604800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+    def generate_auth_token(self):
+        s = Serializer(current_app.config['SECRET_KEY'])
         return s.dumps({'user_id': self.user_id})
 
     @staticmethod
