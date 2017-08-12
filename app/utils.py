@@ -1,6 +1,7 @@
 import datetime
 from typing import List
-
+from flask import jsonify
+from enum import Enum
 
 def date_from_str(date_str: str) -> datetime.date:
     arr = date_str.split('/')  # type:List[str]
@@ -25,3 +26,23 @@ def str_from_date_time(date: datetime.datetime) -> str:
     if date is None:
         return None
     return date.strftime('%Y/%m/%d %H:%M:%S')
+
+
+#########
+#  Helper Responses
+#########
+class Error(Enum):
+    MISSING_ARGS = 1
+    ILLEGAL_ARGS = 2
+
+
+error_messages = {Error.MISSING_ARGS: 'Missing arguments', Error.ILLEGAL_ARGS: 'Illegal arguments'}
+
+
+def bad_request(err: Error, message: str = None):
+    if message is None:
+        message = error_messages[err]
+    err_obj = {'id': err.value, 'message': message}
+    response = jsonify({'error': err_obj})
+    response.status_code = 400
+    return response

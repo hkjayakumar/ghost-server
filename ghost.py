@@ -1,7 +1,7 @@
-from app import factory
+from app.app import factory
 
 import os
-from app import socketio
+# from app import socketio
 
 # import events
 

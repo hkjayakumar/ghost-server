@@ -1,15 +1,15 @@
 import os
 
 from flask import Flask
-from api.user_api import user_api
-from api.message_api import message_api
+from app.api.user_api import user_api
+from app.api.message_api import message_api
 
-import config
-from extensions import db
+from app import config
+from app.extensions import db
 
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 
-socketio = SocketIO()
+# socketio = SocketIO()
 
 def factory(configuration=config.DevelopmentConfig):
     application = Flask(__name__)
@@ -27,5 +27,6 @@ def factory(configuration=config.DevelopmentConfig):
 
 if __name__ == '__main__':
     app = factory(os.environ['APP_SETTINGS'])
-    socketio.init_app(app)
-    socketio.run(app)
+    app.run()
+    # socketio.init_app(app)
+    # socketio.run(app)

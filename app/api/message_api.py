@@ -4,10 +4,10 @@ from typing import List
 from flask import Blueprint, jsonify, request
 from flask import g
 
-from extensions import auth, db
-from helper_responses import bad_request, Error
-from models import LoginModel, UserModel, MessageModel
-from utils import date_time_from_str
+from app.extensions import auth, db
+from app.utils import bad_request, Error
+from app.models import LoginModel, UserModel, MessageModel
+from app.utils import date_time_from_str
 
 message_api = Blueprint('message_api', __name__)
 

@@ -4,9 +4,9 @@ from typing import List
 from flask import Blueprint, jsonify, request
 from flask import g
 
-from extensions import auth, db
-from helper_responses import bad_request, Error
-from models import LoginModel, UserModel
+from app.extensions import auth, db
+from app.utils import bad_request, Error
+from app.models import LoginModel, UserModel
 
 user_api = Blueprint('user_api', __name__)
 

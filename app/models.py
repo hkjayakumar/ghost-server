@@ -9,8 +9,8 @@ from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from extensions import db
-from utils import str_from_date, str_from_date_time
+from app.extensions import db
+from app.utils import str_from_date, str_from_date_time
 
 
 class BaseModel(db.Model):
