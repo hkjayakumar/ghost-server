@@ -1,9 +1,11 @@
-from app.app import factory
-
 import os
-# from app import socketio
 
-# import events
+from app.app import factory
+from app.app import socketio
+import app.events
 
 ghost = factory(os.environ['APP_SETTINGS'])
-# socketio.init_app(ghost)
+socketio.init_app(ghost)
+
+if __name__ == '__main__':
+    socketio.run(ghost)
